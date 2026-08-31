@@ -1,0 +1,6 @@
+method,mean_abs_bad_rate_bias,baseline_abs_bad_rate_bias,excess_over_baseline,p_one_sided,n_pairs,mean_abs_gini_bias,hallucinates,verdict
+none (biased baseline),0.0023208943950489254,0.0023208943950489254,0.0,1.0,20,0.006537982700226286,False,"passes null: no correction reported, as there should not be"
+ipw,0.004176928629048236,0.0023208943950489254,0.0018560342339993111,0.03927539398571484,20,0.015931810138923398,False,"passes null: no correction reported, as there should not be"
+heckman,0.02726483548353213,0.0023208943950489254,0.024943941088483208,0.00019679484024277862,20,0.010207064271246569,True,FAILS null: manufactures a correction where none exists
+parcelling,0.07809741209177674,0.0023208943950489254,0.07577651769672782,1.448728471199021e-07,20,0.047271378775469955,True,FAILS null: manufactures a correction where none exists
+fuzzy,0.07820522525722354,0.0023208943950489254,0.07588433086217461,1.497613934460294e-07,20,0.04359086117664329,True,FAILS null: manufactures a correction where none exists

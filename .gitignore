@@ -1,0 +1,10 @@
+# The LendingClub files are ~650 MB and CC0 — fetch them with `make data`.
+data/
+
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+outputs/run.log

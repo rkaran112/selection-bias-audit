@@ -1,0 +1,21 @@
+name: tests
+
+# The test suite runs on synthetic data with known ground truth, so it needs
+# neither the LendingClub files nor network access.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pytest tests -q

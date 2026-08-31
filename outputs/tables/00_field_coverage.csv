@@ -1,0 +1,8 @@
+field,accepted_missing_pct,rejected_missing_pct
+risk_score,0.0,67.192
+dti,0.066,7.262
+emp_length_yrs,5.76,3.441
+amount_requested,0.0,0.677
+state,0.0,0.0
+zip3,0.0,0.0
+app_year,0.0,0.0
