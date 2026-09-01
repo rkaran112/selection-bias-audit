@@ -626,26 +626,31 @@ def build_pdf(out: Path) -> Path:
          pct(n("part4_economics.breakeven_bad_rate_60m"), 1), "derived"],
     ], widths=[6.4 * cm, 3.6 * cm, 6.4 * cm], align=[1])]
 
-    rows = [["Method", "Swap-in applicants", "Their inferred bad rate",
-             "Profit forgone", "90% interval"]]
+    rows = [["Method", "Swap-in applicants", "Inferred bad rate",
+             "Break-even they face", "Profit forgone"]]
     for r in n("part4_economics.by_method", []):
         rows.append([
             r.get("method", ""),
             f"{r.get('swap_in_applicants', 0):,.0f}",
             pct(r.get("swap_in_inferred_bad_rate"), 1),
+            pct(r.get("swap_in_breakeven_bad_rate"), 1),
             money(r.get("profit_forgone_population")),
-            f"[{money(r.get('profit_forgone_ci_lo'))}, "
-            f"{money(r.get('profit_forgone_ci_hi'))}]",
         ])
     E += [Spacer(1, 8), P("Swap-set analysis, volume-neutral", "h2"),
           table(rows, widths=[3.0 * cm, 3.2 * cm, 3.4 * cm, 3.0 * cm,
                               3.8 * cm], align=[1, 2, 3, 4], fs=8.2),
           P("The corrected model approves exactly as many applicants as the "
             "lender approves today, so this isolates ranking quality rather "
-            "than recommending a bigger book. The confidence interval covers "
-            "sampling error in the swap set only. It does NOT cover the "
-            "disagreement between methods, which is far larger and is the "
-            "real uncertainty.", "small")]
+            "than recommending a bigger book. Note the break-even column: the "
+            "swap-in set lands in the safest score bands, where LendingClub "
+            "priced loans near 9% APR, so the break-even THEY face is far "
+            "below the pooled figure above. Comparing their bad rate against "
+            "the pooled break-even would imply a profit the cash flows do not "
+            "support. Bootstrap intervals are in "
+            "outputs/tables/11_swap_set_economics.csv; they cover sampling "
+            "error in the swap set only, not the disagreement between "
+            "methods, which is far larger and is the real uncertainty.",
+            "small")]
 
     prof = n("part4_swap_profile", [])
     if prof:
@@ -1044,6 +1049,11 @@ def build_deck(out: Path) -> Path:
     s = slide()
     header(s, "PART 4", "What is your cutoff costing you?")
     be = n("part4_economics.breakeven_bad_rate_36m")
+    be_sw = [r.get("swap_in_breakeven_bad_rate") for r in econ
+             if r.get("swap_in_breakeven_bad_rate") is not None]
+    sens_vals = [r["profit_forgone_population"]
+                 for r in n("part4_economics.sensitivity_to_cost_of_funds", [])
+                 if r.get("profit_forgone_population") is not None]
     vals = [r.get("profit_forgone_population") for r in econ
             if r.get("profit_forgone_population") is not None]
     lo, hi = (min(vals), max(vals)) if vals else (None, None)
@@ -1208,10 +1218,16 @@ def build_readme(template: Path, out: Path) -> Path:
     profits = [r.get("profit_forgone_population") for r in econ
                if r.get("profit_forgone_population") is not None]
     be = n("part4_economics.breakeven_bad_rate_36m")
+    be_sw = [r.get("swap_in_breakeven_bad_rate") for r in econ
+             if r.get("swap_in_breakeven_bad_rate") is not None]
+    sens_vals = [r["profit_forgone_population"]
+                 for r in n("part4_economics.sensitivity_to_cost_of_funds", [])
+                 if r.get("profit_forgone_population") is not None]
 
     if profits and all(p < 0 for p in profits):
         verdict = ("approving the swap-in set would have destroyed value, not "
-                   "created it, at every method's estimate of its bad rate.")
+                   "created it, at every method's estimate of its bad rate. "
+                   "The cutoff is not leaving money on the table here.")
     elif profits and all(p > 0 for p in profits):
         verdict = ("the swap-in set is profitable on every method's estimate, "
                    "so the cutoff does appear to be leaving money on the table.")
@@ -1263,6 +1279,10 @@ def build_readme(template: Path, out: Path) -> Path:
         "breakeven": pct(be, 1),
         "swapin_range": (f"{pct(min(sw), 1)} to {pct(max(sw), 1)}"
                          if sw else "n/a"),
+        "swapin_breakeven": (f"{pct(min(be_sw), 1)} to {pct(max(be_sw), 1)}"
+                             if be_sw else "n/a"),
+        "profit_lo_sens": money(min(sens_vals)) if sens_vals else "n/a",
+        "profit_hi_sens": money(max(sens_vals)) if sens_vals else "n/a",
         "profit_verdict": verdict,
         "seed": str(n("meta.seed")),
         "runtime": _runtime(),

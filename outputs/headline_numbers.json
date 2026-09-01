@@ -4,7 +4,7 @@
     "python": "3.13.2",
     "numpy": "2.4.4",
     "pandas": "3.0.2",
-    "generated_utc": "2026-08-31T20:14:53Z",
+    "generated_utc": "2026-09-01T14:08:49Z",
     "config": {
       "seed": 20260901,
       "max_accepted": 400000,
@@ -54,7 +54,7 @@
         "ci_level": 0.9
       }
     },
-    "runtime_seconds": 568.8
+    "runtime_seconds": 435.2
   },
   "data": {
     "accepted_rows_total": 2260668,
@@ -184,7 +184,7 @@
           "9": 0.3529999852180481
         }
       },
-      "seconds": 3.8714139461517334
+      "seconds": 2.8276660442352295
     },
     "fuzzy": {
       "est_reject_bad_rate": 0.49501105956419156,
@@ -197,7 +197,7 @@
         "accepted_bad_rate": 0.19875000417232513,
         "frac_pd_clipped_at_1": 0.0009476096729644757
       },
-      "seconds": 4.669110536575317
+      "seconds": 3.5429184436798096
     },
     "ipw": {
       "est_reject_bad_rate": 0.20913118553604665,
@@ -212,7 +212,7 @@
         "frac_weights_capped": 0.01,
         "ess_ratio": 0.32901671554609063
       },
-      "seconds": 5.278579235076904
+      "seconds": 4.249035835266113
     },
     "heckman": {
       "est_reject_bad_rate": 0.2459469772208431,
@@ -238,7 +238,7 @@
         "exclusion": [],
         "rho_significant_5pct": false
       },
-      "seconds": 21.910760402679443
+      "seconds": 17.243345737457275
     },
     "heckman_with_exclusion": {
       "est_reject_bad_rate": 0.24125980142296935,
@@ -1751,6 +1751,7 @@
         "model_vs_actual_decision_corr": 0.5943593678698801,
         "breakeven_bad_rate_36m": 0.1472780651749545,
         "breakeven_bad_rate_60m": 0.07594370301939052,
+        "swap_in_breakeven_bad_rate": 0.0794393295376297,
         "swap_in_inferred_bad_rate": 0.1924961269662997,
         "swap_in_mean_amount": 9756.6443718852,
         "profit_forgone_population": -661636754.3170848,
@@ -1771,6 +1772,7 @@
         "model_vs_actual_decision_corr": 0.5870519908609023,
         "breakeven_bad_rate_36m": 0.1472780651749545,
         "breakeven_bad_rate_60m": 0.07594370301939052,
+        "swap_in_breakeven_bad_rate": 0.07959277321553927,
         "swap_in_inferred_bad_rate": 0.1800815628383487,
         "swap_in_mean_amount": 8986.666317638315,
         "profit_forgone_population": -555257779.2568369,
@@ -1791,6 +1793,7 @@
         "model_vs_actual_decision_corr": 0.2686236167059613,
         "breakeven_bad_rate_36m": 0.1472780651749545,
         "breakeven_bad_rate_60m": 0.07594370301939052,
+        "swap_in_breakeven_bad_rate": 0.08390036916071093,
         "swap_in_inferred_bad_rate": 0.12962347972015262,
         "swap_in_mean_amount": 7134.941080736091,
         "profit_forgone_population": -309147345.2537711,
@@ -1811,6 +1814,7 @@
         "model_vs_actual_decision_corr": 0.28456461433298424,
         "breakeven_bad_rate_36m": 0.1472780651749545,
         "breakeven_bad_rate_60m": 0.07594370301939052,
+        "swap_in_breakeven_bad_rate": 0.08266711951816742,
         "swap_in_inferred_bad_rate": 0.1251099216084041,
         "swap_in_mean_amount": 7147.503610462705,
         "profit_forgone_population": -280241636.8090735,

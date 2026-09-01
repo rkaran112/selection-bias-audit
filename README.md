@@ -145,12 +145,18 @@ zero. Bars that are not near zero are methods reporting a bias that does not
 exist.*
 
 **3. The cutoff does not appear to be discarding profitable business.** The
-break-even bad rate is 14.7% for a 36-month loan on LendingClub's own
-realised cash flows. The swap-in set — applicants the corrected model would
-approve and the lender declined — has an inferred bad rate of
-12.5% to 19.2%. All four methods agree on the sign: **approving the swap-in set would have destroyed value, not created it, at every method's estimate of its bad rate.**
-This contradicts the premise the tool was built to test, which is why it is
-stated here rather than buried.
+swap-in set — applicants the corrected model would approve and the lender
+declined — has an inferred bad rate of 12.5% to 19.2%. That has to be judged
+against the break-even those particular applicants face, **7.9% to 8.4%**,
+not against the pooled 14.7%: the swap-in set lands in the safest score
+bands, where LendingClub priced loans near 9% APR, and over a ~40-month life at
+a 3% cost of funds there is very little margin left to absorb any defaults at
+all.
+
+All four methods agree on the sign: **approving the swap-in set would have destroyed value, not created it, at every method's estimate of its bad rate. The cutoff is not leaving money on the table here.** The sign is also
+stable across the funding-cost sensitivity grid — only the magnitude moves,
+from -$577m to -$83m. This contradicts the premise the
+tool was built to test, which is why it is stated here rather than buried.
 
 ---
 
@@ -175,10 +181,13 @@ stated here rather than buried.
   is a different population, not a set of near-misses, and the correlation
   between model rank and the actual decision is reported alongside it for the
   same reason (`outputs/tables/14_swap_in_profile.csv`).
-- **The profit figure is assumption-sensitive.** Yields, losses and LGD are
-  measured from realised cash flows; cost of funds, servicing and loan life are
-  assumptions. The sign of the answer can change across a defensible range, so
-  the repo publishes the whole sensitivity grid rather than one cell.
+- **The profit figure is assumption-sensitive in magnitude.** Yields, losses
+  and LGD are measured from realised cash flows; cost of funds, servicing and
+  loan life are assumptions. Across a defensible funding-cost range the
+  estimate moves from -$577m to -$83m — a sevenfold
+  spread — though the sign happens to be stable here. The repo publishes the
+  whole grid rather than one cell, and the sign's stability is a property of
+  this portfolio, not a guarantee.
 - **It says nothing about race or any protected attribute.** The geographic
   analysis joins to no census data and infers no demographics from ZIP. A
   3-digit ZIP covers hundreds of thousands of people. The only available claim
@@ -211,7 +220,7 @@ generator. `outputs/headline_numbers.json` is the single source of truth — the
 PDF, the deck and the numbers in this README are all rendered from it, so none
 of them can drift from the pipeline that produced them.
 
-Runtime is roughly 9 minutes on a laptop, dominated by the Part 3 sweep.
+Runtime is roughly 7 minutes on a laptop, dominated by the Part 3 sweep.
 
 ---
 

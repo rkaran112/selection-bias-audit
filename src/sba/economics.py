@@ -66,14 +66,26 @@ def calibrate_yields(acc: pd.DataFrame, score: np.ndarray,
     rows = []
     for b, g in d.groupby("_band"):
         gg, bb = g[g["bad"] == 0], g[g["bad"] == 1]
+        gy = float(gg["_net"].mean()) if len(gg) else np.nan
+        by = float(bb["_net"].mean()) if len(bb) else np.nan
+        term = float(g["term_months"].mean())
+        drag = (cfg.cost_of_funds_annual + cfg.servicing_cost_annual) \
+            * cfg.wal_fraction_of_term * term / 12.0
         rows.append({
             "band": int(b), "n": len(g),
             "bad_rate": float(g["bad"].mean()),
-            "good_yield": float(gg["_net"].mean()) if len(gg) else np.nan,
-            "bad_yield": float(bb["_net"].mean()) if len(bb) else np.nan,
+            "good_yield": gy, "bad_yield": by,
             "lgd": float(bb["_lgd"].clip(0, 1).mean()) if len(bb) else np.nan,
             "mean_int_rate": float(g["int_rate"].mean()),
-            "mean_term": float(g["term_months"].mean()),
+            "mean_term": term,
+            # The break-even bad rate a loan in THIS band actually faces.
+            # It is far below the pooled figure in the safest bands, because
+            # LendingClub priced those loans near 9% and a ~40-month life at
+            # the stated funding cost eats most of that margin. Quoting only
+            # the pooled break-even next to a low-risk swap-in set would
+            # invite an arithmetic that does not reconcile.
+            "breakeven_bad_rate": float((gy - drag) / (gy - by))
+            if np.isfinite(gy) and np.isfinite(by) and gy > by else np.nan,
         })
     by_band = pd.DataFrame(rows).sort_values("band").reset_index(drop=True)
 
@@ -225,7 +237,21 @@ def analyse(applicants: pd.DataFrame, pd_baseline: np.ndarray,
         b_in = _band_of(ss.swap_in["pd_baseline"].to_numpy("float64"), edges)
         prof_in = expected_profit(ss.swap_in, p_in, b_in, yc, cfg)
         tot, lo, hi = bootstrap_profit(prof_in, w_in, cfg, seed)
+
+        # The break-even the swap-in set ACTUALLY faces, not the pooled one.
+        # These applicants land in the safest score bands, where LendingClub
+        # priced loans near 9% APR; over a ~40-month life at the stated funding
+        # cost that leaves very little margin to absorb defaults, so their
+        # break-even is far below the pooled figure. Comparing their bad rate
+        # against the pooled break-even would imply a profit that the cash
+        # flows do not support.
+        be_band = yc.by_band.set_index("band")["breakeven_bad_rate"]
+        be_in = be_band.reindex(b_in).to_numpy("float64")
+        ok_be = np.isfinite(be_in)
         out.update({
+            "swap_in_breakeven_bad_rate": float(
+                np.average(be_in[ok_be], weights=w_in[ok_be]))
+            if ok_be.any() else float("nan"),
             "swap_in_inferred_bad_rate": float(np.average(p_in, weights=w_in)),
             "swap_in_mean_amount": float(np.average(
                 ss.swap_in["amount_requested"].fillna(
